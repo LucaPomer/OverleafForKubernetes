@@ -20,5 +20,5 @@ simpleGit()
     .init()
     .add('./*')
     .commit("first commit!")
-    .addRemote('origin', 'https://github.com/user/repo.git')
+    .addRemote('origin', 'https://github.com/LucaPomer/workOverleaf.git')
     .push('origin', 'master');
