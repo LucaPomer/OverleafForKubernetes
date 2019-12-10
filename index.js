@@ -14,6 +14,7 @@ simpleGit()
             console.log(data);
         }
     });**/
+simpleGit().removeRemote('origin');
 
 simpleGit()
     .init()
