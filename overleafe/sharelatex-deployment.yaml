@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sharelatex
+  name: sharelatex
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.19.0 ()
+      creationTimestamp: null
+      labels:
+        io.kompose.service: sharelatex
+    spec:
+      containers:
+      - env:
+        - name: ENABLED_LINKED_FILE_TYPES
+          value: url,project_file
+        - name: ENABLE_CONVERSIONS
+          value: "true"
+        - name: REDIS_HOST
+          value: redis
+        - name: SHARELATEX_APP_NAME
+          value: Overleaf Community Edition
+        - name: SHARELATEX_MONGO_URL
+          value: mongodb://mongo:1000/sharelatex
+        - name: SHARELATEX_REDIS_HOST
+          value: redis:6379
+        image: sharelatex/sharelatex
+        name: sharelatex
+        ports:
+        - containerPort: 80
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/sharelatex
+          name: sharelatex-claim0
+        - mountPath: /var/run/docker.sock
+          name: sharelatex-claim1
+      restartPolicy: Always
+      volumes:
+      - name: sharelatex-claim0
+        persistentVolumeClaim:
+          claimName: sharelatex-claim0
+      - name: sharelatex-claim1
+        persistentVolumeClaim:
+          claimName: sharelatex-claim1
+status: {}
