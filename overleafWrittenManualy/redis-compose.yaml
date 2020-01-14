@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis-container
+        image: redis
+        ports:
+          - name: redis-port
+            containerPort: 6379   
+        volumeMounts:
+          - name: redis-claim
+            mountPath: /data
+      volumes:
+        - name: redis-claim
+          persistentVolumeClaim:
+            claimName: redis-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis
+  name: redis
+spec:
+  ports:
+    - port: 6379 #port number exposed internally in cluster
+      targetPort: 6379 #port that containers are listening to 
+  selector:
+    app: redis
